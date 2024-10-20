@@ -1,12 +1,12 @@
-name: ${project.name}
-description: ${project.description}
-version: ${project.version}
+name: PlayerRider
+description: Allow you to ride players.
+version: 1.15
 
 author: arboriginal, appztr4ckt
-website: https://www.spigotmc.org/resources/${spigot-id}
-dev-url: https://github.com/arboriginal/${project.artifactId}
+website: https://www.spigotmc.org/resources/playerrider.349283
+dev-url: https://github.com/arboriginal/PlayerRider
 
-main: ${project.groupId}.${project.artifactId}.${spigot-main}
+main: com.github.arboriginal.PlayerRider.PR
 
 commands:
   prider-reload:

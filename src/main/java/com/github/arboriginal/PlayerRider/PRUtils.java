@@ -23,12 +23,10 @@ class PRUtils {
             userMessage(player, "player." + key, player, duck);
             PR.cooldown.set(key + ".alertPlayer", player, duck);
         }
-
         if (!PR.cooldown.isActive(key + ".alertDuck", player, duck)) {
             userMessage(duck, "duck." + key, player, duck);
             PR.cooldown.set(key + ".alertDuck", player, duck);
         }
-
         if (!PR.cooldown.isActive(key + ".broadcast", player, duck)) {
             broadcast(key, player, duck);
             PR.cooldown.set(key + ".broadcast", player, duck);
@@ -46,8 +44,9 @@ class PRUtils {
 
     static void consume(Player player, ItemStack item, String key) {
         if (PR.config.getBoolean("consume_items." + key) && !player.hasPermission("playerrider." + key + ".keepitem")
-                && item.getType() != Material.AIR)
+                && item.getType() != Material.AIR) {
             item.setAmount(item.getAmount() - 1);
+        }
     }
 
     static boolean dataSave() {
@@ -55,23 +54,26 @@ class PRUtils {
             if (!PR.file.exists()) PR.file.createNewFile();
             PR.users.save(PR.file);
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             Bukkit.getLogger().severe(PR.options.file_not_writable_err);
             return false;
         }
     }
 
     static boolean duckAllowed(Player duck, int passengersCount) {
-        for (String group : PR.options.max_riders_groups)
+        for (String group : PR.options.max_riders_groups) {
             if ((group.equals("default") || duck.hasPermission("playerrider.duck." + group))
-                    && PR.config.getInt("max_riders." + group) >= passengersCount)
+                    && PR.config.getInt("max_riders." + group) >= passengersCount) {
                 return true;
+            }
+        }
         return false;
     }
 
     static void effectsClear(Player player, List<PREffect> effects) {
-        for (PREffect effect : effects) player.removePotionEffect(effect.type);
+        for (PREffect effect : effects) {
+            player.removePotionEffect(effect.type);
+        }
     }
 
     static void effectsApply(Player player, List<PREffect> effects) {
@@ -80,10 +82,8 @@ class PRUtils {
             if (amplifier < 0) continue;
 
             try {
-                player.addPotionEffect(
-                        new PotionEffect(effect.type, effect.duration, amplifier, false, false, false), true);
-            }
-            catch (Exception e) {
+                player.addPotionEffect(new PotionEffect(effect.type, effect.duration, amplifier, false, false, false), true);
+            } catch (Exception e) {
                 Bukkit.getLogger().warning(PR.options.potion_effect_err.replace("type", effect.type.toString()));
             }
         }
@@ -103,13 +103,13 @@ class PRUtils {
 
     static boolean isRidable(Player player) {
         if (player.isGliding() || player.isSleeping() || player.isSwimming()
-                || (player.isInsideVehicle() && player.getVehicle().getType() != EntityType.PLAYER))
+                || (player.isInsideVehicle() && player.getVehicle().getType() != EntityType.PLAYER)) {
             return false;
-
+        }
         Block b = player.getLocation().getBlock();
-        for (int i = 1; i < PR.options.min_above_blocks; i++)
+        for (int i = 1; i < PR.options.min_above_blocks; i++) {
             if (!b.getRelative(BlockFace.UP, i).isPassable()) return false;
-
+        }
         return true;
     }
 
@@ -123,10 +123,8 @@ class PRUtils {
 
     static String prepareMessage(String message, CommandSender player, CommandSender duck) {
         message = message.replace("{prefix}", PR.config.getString("prefix"));
-        // @formatter:off
         if (player != null) message = message.replace("{player}", player.getName());
-        if (duck   != null) message = message.replace("{duck}",     duck.getName());
-        // @formatter:on
+        if (duck != null) message = message.replace("{duck}", duck.getName());
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
@@ -141,12 +139,10 @@ class PRUtils {
     }
 
     static String rideToggle(Player player) {
-        String  key    = rideKey(player);
+        String key = rideKey(player);
         boolean status = !PR.users.contains(key) || PR.users.getBoolean(key);
-
         PR.users.set(key, !status);
         if (!dataSave()) return "toggleErr";
-
         return status ? "statusOff" : "statusOn";
     }
 
@@ -167,6 +163,6 @@ class PRUtils {
         if (message.isEmpty()) return;
 
         ((Player) player).spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                new TextComponent(prepareMessage(message.replace("{delay}", "" + delay), player, duck)));
+                new TextComponent(prepareMessage(message.replace("{delay}", String.valueOf(delay)), player, duck)));
     }
 }

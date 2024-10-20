@@ -1,0 +1,241 @@
+# PlayerRider configuration file.
+# .
+# You can find explanation of all parameters here:
+# https://github.com/arboriginal/PlayerRider/blob/master/src/config.yml
+# .
+# Also, an up-to-date list of permissions can be read here: 
+# https://github.com/arboriginal/PlayerRider/blob/master/src/plugin.yml
+# .
+# Don't forget: Whip your friend is fun in Minecraft... not IRL! :p
+
+########################################################################################################
+# Language settings
+########################################################################################################
+#
+# You can use Minecraft colors code in all those language parameters.
+# As I've followed the essentials code notation in the plugin, you have to use the « & » symbol.
+# Here is the codes you can use: https://wiki.ess3.net/mc/
+#
+# Usable placeholders:
+# - {prefix} for the message prefix
+# - {player} for the player who rides
+# - {duck} for the player being riden
+#
+# Prefix used to all plugin messages (at least by default...)
+# If you want a different prefix for messages (or no prefix), leave it blank « "" ».
+# This value replace « {prefix} » in the next parameters.
+prefix: "&8[&7&lPlayerRider&8] "
+# Message displayed when using the command /prider-reload
+reload: "{prefix}&aConfiguration successfully reloaded."
+# Error message when the chosen sound « boost_whip_sound » is incorrect.
+sndErr: "{prefix}&cChosen sound is invalid and has been disabled."
+# Message sent to player trying to ride a player who already have reached his limit.
+tooMany: "{prefix}&6{duck}&c cannot wear more players... He needs to eat more spinach!"
+# Message when the player should be able to ride but it's fail (maybe another plugin cancel the event)
+failed: "{prefix}&cUnable to ride &6{duck}&c, maybe another plugin is preventing it..."
+# Error message when the plugin can't write to the file storing user preferences (ridability only for now)
+fileErr: "{prefix}&cUnable to write to usersPreferences.yml"
+# Warning message displayed in console if you try to run /prider-toggle from it
+toggleWarn: "{prefix}&6Sorry console, you're not a player... Nobody can ride you!"
+# Error message when the user preferences (ridability only for now) cannot be saved (file not writable)
+toggleErr: "{prefix}&cUnable to toggle your ridability, contact an admin..."
+# Messages sent to the player when using command /prider-toggle
+statusOn: "{prefix}&aOther players can now ride you"
+statusOff: "{prefix}&aOther players cannot ride you anymore"
+# Error message when you use a potion effect with wrong parameters
+effectErr: "{prefix}&cError with potion effect {type}"
+
+# In the both 3 sections: (broadcast, player and duck)
+# - sub-section "ride" is used when a player riders another
+# - sub-section "whip" is used when a player whips another
+# - sub-section "eject" when he's being ejected
+#
+# If you don't want one of those messages, simply leave it blank « "" ».
+# You can also adjust the cooldown for messages, see below.
+broadcast:
+  ride: "&f&l•&r {prefix}&6{player}&3 now rides &6{duck}&3!"
+  whip: "&f&l•&r {prefix}&6{player}&3 whips &6{duck}&3!"
+  eject: "&f&l•&r {prefix}&6{duck}&3 has ejected &6{player}&3!"
+
+player:
+  ride: "{prefix}&bYou are riding &e&l{duck}&b, yeah!!!"
+  whip: "{prefix}&bYou whiped &e&l{duck}&b!!!"
+  eject: "{prefix}&e&l{duck}&b's got a temper, try to give him a carrot maybe?"
+
+duck:
+  ride: "{prefix}&e&l{player}&b likes you so much, he now stands on your shoulder :)"
+  whip: "{prefix}&e&l{player}&b whipped you, do you like that?"
+  eject: "{prefix}&bYou've just ejected &e&l{player}&b, beware... I'm sure he will try again!"
+
+# Cooldowns (in seconds)
+cooldowns:
+  ride:
+    perform: 0      # Before to be able to ride again
+    broadcast: 30   # Prevent spam chat: This will not display again the same message (same player, same duck)
+    alertPlayer: 0  # Prevent spam chat (for the player who has just ride another)
+    alertDuck: 0    # Prevent spam chat (for the player being ridden)
+    
+  whip:
+    perform: 2      # Before to be able to whip again
+    broadcast: 30   # Prevent spam chat: This will not display again the same message (same player, same duck)
+    alertPlayer: 2  # Prevent spam chat (for the player who has just whip another)
+    alertDuck: 2    # Prevent spam chat (for the player who has just been whipped)
+    
+  eject:
+    perform: 3      # /!\ Not a real cooldown here, but time to wait before being able to eject the rider
+    broadcast: 30   # Prevent spam chat: This will not display again the same message (same player, same duck)
+    alertPlayer: 3  # Prevent spam chat (for the rider who has just been ejected)
+    alertDuck: 3    # Prevent spam chat (for the player who has just ejected his rider)
+
+# When an action cannot be done because of the cooldown, the player will receive this message
+# Because the chat can be spammed or not read, this will be done as an action bar message.
+# Here, you can use {delay} as the delay value in seconds before the player will be able again.
+#
+# If you don't want one of those messages, simply leave it blank « "" ».
+warn_player_when_cooldown:
+  ride: "&4&lWait &6&l{delay}&4&ls before to ride another player"
+  whip: "&4&lWait &6&l{delay}&4&ls before to whip again &e&l{duck}"
+  eject: "&4&lWait &6&l{delay}&4&ls before to eject &e&l{duck}"
+
+########################################################################################################
+# Settings which change the plugin mechanisms
+########################################################################################################
+
+# Here, you will define which items the player can have in hand to perform the action.
+# You can find usable names here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+allowed_items:
+  ride: # Action: Ride a player
+    - AIR # Air means "empty hand"
+    - LEAD
+    - SADDLE
+  whip: # Action: Whip the player you are riding
+    - BLAZE_ROD
+    - BONE
+    - CARROT
+    - GOLDEN_CARROT
+
+# You decide if items used to perform the action are consumed or not
+consume_items:
+  ride: false
+  whip: true
+
+# Define how many riders can sit on the same player's shoulders
+# You can set groups you need, and give the appropriate permission to your users.
+# Each groups you define will be checked with the permission "playerrider.duck.<group>"
+max_riders:
+  # This group is the default one (if you delete it, it will be re-added into your configuration).
+  # It will be applied to all players who don't have another "playerrider.duck.<group>" permission.
+  # No need to give the permission "playerrider.duck.newbies", it's assumed if the player have "playerrider.duck".
+  default: 16
+  # Here are some examples to illustrate:
+  # newbies: 1    <--- corresponds to the permission "playerrider.duck.newbies"
+  # staff: 32     <--- corresponds to the permission "playerrider.duck.staff"
+
+# Max pitch value the riden player must be to be able to eject his rider
+# (look with F3 in the game and see what pich value is OK for you).
+eject_maxPitch: -40.0
+# Decide if a player riden should automaticaly eject his rider when taking damages (true or false)
+eject_when_hurt: true
+# Same, but for the rider: If he takes damages, he's get off the player or not (true or false).
+getoff_when_hurt: true
+# Decide if riders will be protected of suffocation damages when riding a player (true or false).
+prevent_suffocation: true
+# Decide if a player riden cannot damage his rider (true or false).
+prevent_hit_rider: true
+# Decide if riders can boost players or not (true or false)
+boost_allowed: true
+
+##### [ the next parameters are ignored if boost_allowed: false ] #####
+
+# Value of the speed boost (integer), 0 to disable the boost
+boost_amplifier: 4
+# Duration in server ticks (20 ticks = 1 second) of the speed effect, 0 to disable the boost
+boost_duration: 60
+# Max pitch value the rider must be to whip and boost the player (float), check in game with F3.
+boost_maxPitch: 60.0
+# Sound the whip action will play, see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html
+boost_whip_sound: ENTITY_FIREWORK_ROCKET_SHOOT
+# Volume of the sound. Set it to zero if you don't want a sound effect (float)
+boost_whip_volume: 1.0
+# Pitch of the sound (normal play = 1, value can be from 0.4 to 2 if I remember well)
+boost_whip_pitch: 1.3
+# Tips: To find the sound you want, you can use the ingame /playsound command.
+
+##### New in version 1.14 #####
+
+# Max pitch value the riden player must be to be able to view his rider
+# (look with F3 in the game and see what pich value is OK for you).
+# If not used, the player view can be obstructed by rider legs...
+hide_rider_maxPitch: 25 # 0 to disable this feature
+# Please note: This is not perfect, because if the player use third person view, it has no sense...
+# and unfortunately, this cannot be detected in a Spigot plugin (this is client side)
+
+##### New in version 1.14.1 #####
+
+# Bossbar displayed to ridden player
+bossbar_on_ridden_player:
+  enabled: true
+  title: "{player} is ridding you!" # {player} will be replaced by the rider's name
+  color: YELLOW # Available values: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+  style: SOLID  # Available values: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+  progress: 1.0 # Between 0 and 1
+
+# Disabled worlds (you can use « [] > to represents an empty list)
+disabled_worlds:
+  - world1_to_disable
+  - World2_to_disable
+
+##### New in version 1.14.2 #####
+
+# Disclaimer for those potion effects:
+# It can be used by players to cure a higher effect, and I will not make a complex mechanic to prevent it.
+# BUT, if a player has other types of effects before being mounted, those ones will not be affected by PlayerRider.
+# It will only clear, when it stops, types of effect it has added when the action started.
+#
+# For example: (considering the default value of this config file with enabled = true)
+# If a player is affected by a HUNGER effect for 2 minutes and is quickly mounted by another player,
+# even if it's only for 1 second, he will be cured from HUNGER when this other player leaves his shoulder.
+#
+# So now you are warned about that, choose the effect you want to give with this in mind.
+
+# Suggested by Elguerrero: If enabled when a player has someone on his shoulder, he will be slow down
+affect_ridden_player:
+  enabled: false
+  # Available types here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+  # BEWARE: You have to verify for each effect you set if it can support the "max" multiplier value.
+  # I cannot garantee all effect will works with all values, so make your tests before.
+  # The effect showed here are arbitrary examples (I've tested those values but not using them on my server)
+  effects:
+    - type: SLOW # Potion effect type, see the link given above
+      init: 1    # (integer) Potion effect multiplier when the player has only one player on his shoulder
+      inc: 1     # (integer) Value to add for each additional player on his shoulder
+      max: 2     # (integer) Max value for the multiplier
+      duration: 1200 # (integer, ticks : 1 sec = 20 ticks) /!\ Refreshed when the ridden player moves
+    # You can add several effects, each defined like the previous one. Example:
+    - type: HUNGER
+      init: 1
+      inc: 2
+      max: 10
+      duration: 1200
+
+# Works like affect_ridden_player but affect the ridden player when he's being whipped
+affect_whipped_player:
+  enabled: false
+  # Note: As it is the primary function of this whip feature, the speed boost applied is not modifiable here
+  # You can change its settings wieht the parameters "boost_amplifier" and associated.
+  # They are after the line « ##### [ the next parameters are ignored if boost_allowed: false ] ##### »
+  effects:
+    - type: JUMP
+      init: 1
+      inc: -1
+      max: 0 # When you set a negative "inc" value, max value is used as a minimum value
+      duration: 60
+    - type: CONFUSION
+      init: 0
+      inc: 1
+      max: 1
+      duration: 60
+
+##### New in version 1.14.3 #####
+min_above_blocks: 1 # (integer) Number of minimum "passable" blocks above a player to let other ride him
+# (passable blocks are blocks the player can pass through, like AIR or grass for example).

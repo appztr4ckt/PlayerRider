@@ -5,9 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 class PRcooldown {
-    private HashMap<String, Long> cooldowns = new HashMap<String, Long>();
-
-    // Package methods --------------------------------------------------------------------------------------------------
+    private HashMap<String, Long> cooldowns = new HashMap<>();
 
     void clear(String key, Player player) {
         clear(key, player, null);
@@ -39,15 +37,13 @@ class PRcooldown {
         if (delay > 0) cooldowns.put(id(key, player, duck), getCurrentTime() + delay);
     }
 
-    // Private methods --------------------------------------------------------------------------------------------------
-
     private void clear(String key, Player player, Player duck) {
         cooldowns.remove(id(key, player, duck));
     }
 
     private Long get(String key, Player player, Player duck) {
         key = id(key, player, duck);
-        return cooldowns.containsKey(key) ? cooldowns.get(key) : 0l;
+        return cooldowns.getOrDefault(key, 0L);
     }
 
     private Long getCurrentTime() {
